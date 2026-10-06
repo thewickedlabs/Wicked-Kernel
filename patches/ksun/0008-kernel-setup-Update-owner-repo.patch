@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: pershoot <190600+pershoot@users.noreply.github.com>
+Date: Wed, 24 Dec 2025 00:25:13 -0500
+Subject: [PATCH 8/8] kernel: setup: Update owner/repo
+
+(cherry picked from commit 9a8d3f03db9bd6d51410a6fd732d1db273692ca6)
+---
+ kernel/setup.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/setup.sh b/kernel/setup.sh
+index d9f12087..94b94d95 100755
+--- a/kernel/setup.sh
++++ b/kernel/setup.sh
+@@ -2,8 +2,8 @@
+ set -eu
+ 
+ GKI_ROOT=$(pwd)
+-OWNER="KernelSU-Next"
+-REPO="$OWNER"
++OWNER="pershoot"
++REPO="KernelSU-Next"
+ 
+ display_usage() {
+     echo "Usage: $0 [--cleanup | <commit-or-tag>]"

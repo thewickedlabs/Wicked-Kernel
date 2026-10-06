@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: pershoot <190600+pershoot@users.noreply.github.com>
+Date: Fri, 19 Dec 2025 13:07:22 -0500
+Subject: [PATCH 7/8] kernel: setup: Add support for AOSP
+
+(cherry picked from commit 3e97a253b84e3ca5084b2c2d92e150186bc844ab)
+---
+ kernel/setup.sh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/setup.sh b/kernel/setup.sh
+index 292e2c02..d9f12087 100755
+--- a/kernel/setup.sh
++++ b/kernel/setup.sh
+@@ -16,6 +16,8 @@ display_usage() {
+ initialize_variables() {
+     if test -d "$GKI_ROOT/common/drivers"; then
+          DRIVER_DIR="$GKI_ROOT/common/drivers"
++    elif test -d "$GKI_ROOT/aosp/drivers"; then
++         DRIVER_DIR="$GKI_ROOT/aosp/drivers"
+     elif test -d "$GKI_ROOT/drivers"; then
+          DRIVER_DIR="$GKI_ROOT/drivers"
+     else

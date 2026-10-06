@@ -1,0 +1,27 @@
+diff --git a/init/main.c b/init/main.c
+index e345b6d62..1ddf28e00 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -815,7 +815,21 @@ void __init __weak pgtable_cache_init(void) { }
+ void __init __weak trap_init(void) { }
+ 
+ bool initcall_debug;
+-core_param(initcall_debug, initcall_debug, bool, 0644);
++
++/* LK forces initcall_debug=1 on the cmdline; ignore it there, allow it at runtime */
++static int initcall_debug_set(const char *val, const struct kernel_param *kp)
++{
++	if (system_state == SYSTEM_BOOTING)
++		return 0;
++	return param_set_bool(val, kp);
++}
++
++static const struct kernel_param_ops initcall_debug_ops = {
++	.set = initcall_debug_set,
++	.get = param_get_bool,
++};
++/* same registration as core_param(), so it stays kernel.initcall_debug */
++__module_param_call("", initcall_debug, &initcall_debug_ops, &initcall_debug, 0644, -1, 0);
+ 
+ #ifdef TRACEPOINTS_ENABLED
+ static void __init initcall_debug_enable(void);

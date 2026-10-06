@@ -1,0 +1,48 @@
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 49d97f204..4b7d7f62f 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -2142,6 +2142,24 @@ static u16 printk_sprint(char *text, u16 size, int facility,
+ 	return text_len;
+ }
+ 
++/* IR-11: the WCN driver logs these 4 lines on every 5 s loopcheck heartbeat */
++static const char * const wcn_heartbeat[] = {
++	"WCN BASE: Platform Version:",
++	"WCN BASE: tx:at+loopcheck=",
++	"WCN BASE: mdbg_tx_cb, chn:",
++	"WCN BASE: : rx:loopcheck_ack:",
++};
++
++static bool is_wcn_heartbeat(const char *text)
++{
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(wcn_heartbeat); i++)
++		if (str_has_prefix(text, wcn_heartbeat[i]))
++			return true;
++	return false;
++}
++
+ __printf(4, 0)
+ int vprintk_store(int facility, int level,
+ 		  const struct dev_printk_info *dev_info,
+@@ -2153,7 +2171,7 @@ int vprintk_store(int facility, int level,
+ 	struct printk_record r;
+ 	unsigned long irqflags;
+ 	u16 trunc_msg_len = 0;
+-	char prefix_buf[8];
++	char prefix_buf[40];
+ 	u8 *recursion_ptr;
+ 	u16 reserve_size;
+ 	va_list args2;
+@@ -2182,6 +2200,9 @@ int vprintk_store(int facility, int level,
+ 	reserve_size = vsnprintf(&prefix_buf[0], sizeof(prefix_buf), fmt, args2) + 1;
+ 	va_end(args2);
+ 
++	if (facility == 0 && is_wcn_heartbeat(printk_skip_headers(prefix_buf)))
++		goto out;
++
+ 	if (reserve_size > LOG_LINE_MAX)
+ 		reserve_size = LOG_LINE_MAX;
+ 

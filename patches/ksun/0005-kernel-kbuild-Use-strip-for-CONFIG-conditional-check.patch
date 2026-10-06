@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: pershoot <190600+pershoot@users.noreply.github.com>
+Date: Sat, 17 Jan 2026 04:15:03 -0500
+Subject: [PATCH 5/8] kernel: kbuild: Use strip for CONFIG conditional checks
+
+(cherry picked from commit 77df4922a9c587d4008d7eab9f2c60af82aa7aee)
+---
+ kernel/Kbuild | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/Kbuild b/kernel/Kbuild
+index 91a8a2ee..9aeab87a 100644
+--- a/kernel/Kbuild
++++ b/kernel/Kbuild
+@@ -41,7 +41,7 @@ kernelsu-objs += infra/seccomp_cache.o
+ kernelsu-objs += infra/su_mount_ns.o
+ kernelsu-objs += infra/symbol_resolver.o
+ 
+-ifneq ($(CONFIG_KSU_DISABLE_MANAGER),y)
++ifneq ($(strip $(CONFIG_KSU_DISABLE_MANAGER)),y)
+ kernelsu-objs += manager/apk_sign.o
+ kernelsu-objs += manager/pkg_observer.o
+ kernelsu-objs += manager/throne_tracker.o
+@@ -70,13 +70,13 @@ kernelsu-objs += feature/adb_root.o
+ kernelsu-objs += feature/selinux_hide.o
+ 
+ ifdef KBUILD_EXTMOD
+-ifeq ($(CONFIG_KSU_DISABLE_MANAGER),y)
++ifeq ($(strip $(CONFIG_KSU_DISABLE_MANAGER)),y)
+ ccflags-y += -DCONFIG_KSU_DISABLE_MANAGER=1
+ endif
+-ifeq ($(CONFIG_KSU_DISABLE_POLICY),y)
++ifeq ($(strip $(CONFIG_KSU_DISABLE_POLICY)),y)
+ ccflags-y += -DCONFIG_KSU_DISABLE_POLICY=1
+ endif
+-ifeq ($(CONFIG_KSU_DEBUG),y)
++ifeq ($(strip $(CONFIG_KSU_DEBUG)),y)
+ ccflags-y += -DCONFIG_KSU_DEBUG=1
+ endif
+ ifeq ($(CONFIG_KSU_X86_PATCH_SYSCALL_DISPATCHER),y)
