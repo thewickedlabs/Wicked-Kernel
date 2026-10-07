@@ -33,7 +33,7 @@ against all 168 of them (0 missing symbols, 0 CRC mismatches). It is not an over
 - **Bootloader unlocked.** The kernel isn't signed by Foxxd, so a locked bootloader won't boot it.
 - **KernelSU Next manager v3.4.0.** The kernel side is v3.4.0; a newer manager may expect a newer kernel interface.
 
-## Downloads (Releases page)
+## Downloads ([latest release](https://github.com/thewickedlabs/Wicked-Kernel/releases/latest))
 
 | File | What it's for |
 |---|---|
