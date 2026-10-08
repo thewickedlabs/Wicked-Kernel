@@ -64,27 +64,34 @@ step 2).
 KernelSU Next manager → Home → **Uninstall** → **Restore stock image**. Root keeps working until you
 reboot. **Do not reboot yet.** If the preflight said `init_boot is stock`, skip this step.
 
-**3. Flash the kernel.** Kernel Flasher → your current slot → **Flash** → **Flash AK3 Zip** → pick
+**3. Install the two required modules (don't reboot yet).** SUSFS and NoMount are built into the kernel but
+do nothing until their userspace modules are present, so install both now, before you flash. In KernelSU
+Next → Modules → Install from storage, add each:
+- [**A67LG2 Sus Enabler**](https://github.com/thewickedlabs/A67LG2-SusEnabler) — the SUSFS v2.3.0
+  config/tool (lock-state spoof, path hiding, quiet logs).
+- [**NoMount**](https://github.com/maxsteeel/nomount) — the metamodule that does the path redirection
+  instead of mounts.
+
+**Do not reboot yet.**
+
+**4. Flash the kernel.** Kernel Flasher → your current slot → **Flash** → **Flash AK3 Zip** → pick
 `Wicked-Kernel-A67LG2-vX.Y-AnyKernel3.zip`. Wait for it to finish. The installer refuses to run if
-`init_boot` is still patched, so you can't do steps 2 and 3 in the wrong order by accident.
+`init_boot` is still patched, so you can't do steps 2 and 4 in the wrong order by accident.
 
-**4. Reboot once.** The bootloader shows its usual unlocked warning for about 10 seconds, then Android
-starts (about 1 minute). Open the KernelSU Next manager: it should say **Working**, version 33294, built in.
-
-**5. Optional extras.** The kernel has SUSFS and NoMount built in, but they only do something once userspace
-uses them: the SUSFS module/tool v2.3.0 from [susfs4ksu](https://gitlab.com/simonpunk/susfs4ksu), and the
-[NoMount](https://github.com/maxsteeel/nomount) metamodule (built from the same commit as the kernel,
-`e2e71ee`, works best).
+**5. Reboot once.** The bootloader shows its usual unlocked warning for about 10 seconds, then Android
+starts (about 1 minute). Open the KernelSU Next manager: it should say **Working**, version 33294, built in,
+with both modules active.
 
 ### Why it has to be done this way
 
 - **Built-in KernelSU and a patched `init_boot` can't be combined.** A patched `init_boot` loads the
   KernelSU module at every boot. This kernel already has KernelSU inside it, so you would get two copies
   fighting over the same hooks. That's why stock `init_boot` has to go back first.
-- **Why not reboot between steps 2 and 3:** after step 2 alone, a reboot gives you the stock kernel with a
+- **Why not reboot before the flash:** after step 2 alone, a reboot gives you the stock kernel with a
   stock `init_boot`, so no root, and you can't flash the kernel from the phone anymore (you'd need fastboot).
-  After step 3 alone (if the installer let you), a reboot would load KernelSU twice. Doing both, then one
-  reboot, goes straight from one working state to the other.
+  After step 4 alone (if the installer let you), a reboot would load KernelSU twice. Doing it all, then one
+  reboot, goes straight from one working state to the other. Installing the modules in step 3 changes
+  nothing until that reboot, so it's safe to do before the flash.
 - **Why the preflight check:** the phone's drivers are Unisoc modules built for one kernel interface. If a
   firmware update changed them, they could fail to load on this kernel: no display, no Wi-Fi, or a bootloop.
   The check catches that on your PC before anything is written.
